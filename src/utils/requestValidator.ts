@@ -50,7 +50,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
             const checked = checkedPutMethodErrors(req.body.title, +req.params.id)
             // console.log('Request Type:', req.method)
             if(checked.errorsMessages.length > 0) {
-                res.status(400).send(errors)
+                res.status(404).send(errors)
             } else {
                 next()
             }
