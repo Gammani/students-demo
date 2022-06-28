@@ -10,8 +10,9 @@ type ErrorsType = {
 }
 
 export let errors: ErrorsType = {errorsMessages: []}
+let video: any
 
-export const checkedPostMethodErrors = (title: string) => {
+const checkedPostMethodErrors = (title: string) => {
     if(title === null) {
         errors.errorsMessages.push({message: 'title не должно быть null', field: 'title'})
     } else if(title.trim() === "") {
@@ -24,9 +25,9 @@ export const checkedPostMethodErrors = (title: string) => {
     return errors;
 }
 
-export const checkedPutMethodErrors = (title: string, id: number) => {
-    const videoId = videos.find(v => v.id === id)
-    if(videoId) {
+const checkedPutMethodErrors = (title: string, id: number) => {
+    video = videos.find(v => v.id === id)
+    if(video) {
         return checkedPostMethodErrors(title)
     } else {
         errors.errorsMessages.push({message: 'id не найден', field: 'id'})
@@ -50,7 +51,10 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
             const checked = checkedPutMethodErrors(req.body.title, +req.params.id)
             // console.log('Request Type:', req.method)
             if(checked.errorsMessages.length > 0) {
-                res.status(404).send(errors)
+                if(!video) {
+                    res.status(404).send(errors)
+                }
+                res.status(400).send(errors)
             } else {
                 next()
             }
